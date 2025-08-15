@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jobproject
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  signerKey: "qefqi5X+n/6jIHV74cPC6QTZvKBmyddMNhw7vWO3Yu7Rk1YdN2EWNjs7zJX/ZL0i"
