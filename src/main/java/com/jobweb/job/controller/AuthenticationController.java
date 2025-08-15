@@ -3,6 +3,7 @@ package com.jobweb.job.controller;
 import com.jobweb.job.domain.dto.request.AuthenticationRequest;
 import com.jobweb.job.domain.dto.request.IntrospectRequest;
 import com.jobweb.job.domain.dto.request.LogoutRequest;
+import com.jobweb.job.domain.dto.request.RefreshRequest;
 import com.jobweb.job.domain.dto.response.ApiResponse;
 import com.jobweb.job.domain.dto.response.AuthenticationResponse;
 import com.jobweb.job.domain.dto.response.IntrospectResponse;
@@ -43,11 +44,19 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/user/logout")
+    @PostMapping("/logout")
     public ApiResponse<Void> logout(
             @RequestBody LogoutRequest request) throws ParseException, JOSEException {
         this.authenticationService.logoutToken(request);
         return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> refreshToken(
+            @RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(authenticationService.refreshToken(request))
+                .build();
     }
 
 }
