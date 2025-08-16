@@ -1,10 +1,12 @@
 package com.jobweb.job.service;
 
+import com.jobweb.job.domain.Company;
 import com.jobweb.job.domain.User;
 import com.jobweb.job.domain.dto.request.UserCreationRequest;
 import com.jobweb.job.domain.dto.request.UserUpdateRequest;
 import com.jobweb.job.domain.dto.response.UserResponse;
 import com.jobweb.job.mapper.UserMapper;
+import com.jobweb.job.repository.CompanyRepository;
 import com.jobweb.job.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +23,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final CompanyRepository companyRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper;
 
     public UserService(UserRepository userRepository,
+                       CompanyRepository companyRepository,
                        PasswordEncoder passwordEncoder,
                        UserMapper userMapper){
         this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
@@ -49,6 +55,12 @@ public class UserService {
         User newUser = userMapper.toUser(request);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setCreatedAt(Instant.now());
+
+        if (request.getCompany() != null && request.getCompany().getId() > 0) {
+            Company company = companyRepository.findById(request.getCompany().getId())
+                    .orElseThrow(() -> new RuntimeException("Company not found"));
+            newUser.setCompany(company);
+        }
 
         userRepository.save(newUser);
 

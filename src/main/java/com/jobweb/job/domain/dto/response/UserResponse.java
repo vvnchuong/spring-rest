@@ -20,4 +20,16 @@ public class UserResponse {
     String address;
     Instant createdAt;
 
+    CompanyUser company;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class CompanyUser {
+        long id;
+        String name;
+    }
+
 }

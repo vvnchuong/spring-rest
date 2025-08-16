@@ -29,10 +29,16 @@ public class User {
     Gender gender;
 
     String address;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
     String refreshToken;
     Instant createdAt;
     Instant updatedAt;
     String createdBy;
     String updatedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    Company company;
 
 }

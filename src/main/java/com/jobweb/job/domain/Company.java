@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,5 +32,9 @@ public class Company {
     Instant updatedAt;
     String createdBy;
     String updatedBy;
+
+    @OneToMany(mappedBy = "company")
+    List<User> users = new ArrayList<>();
+
 
 }

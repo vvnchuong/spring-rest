@@ -12,7 +12,28 @@ public interface UserMapper {
 
     User toUser(UserCreationRequest request);
 
-    UserResponse toUserResponse(User user);
+    default UserResponse toUserResponse(User user) {
+        if (user == null) return null;
+
+        UserResponse.CompanyUser companyUser = null;
+        if (user.getCompany() != null) {
+            companyUser = UserResponse.CompanyUser.builder()
+                    .id(user.getCompany().getId())
+                    .name(user.getCompany().getName())
+                    .build();
+        }
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .age(user.getAge())
+                .gender(user.getGender().name())
+                .address(user.getAddress())
+                .createdAt(user.getCreatedAt())
+                .company(companyUser)
+                .build();
+    }
 
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 

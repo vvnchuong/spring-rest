@@ -17,4 +17,16 @@ public class UserCreationRequest {
     String gender;
     String address;
 
+    CompanyUser company;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class CompanyUser {
+        long id;
+        String name;
+    }
+
 }
