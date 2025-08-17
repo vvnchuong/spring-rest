@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -46,6 +47,9 @@ public class Job {
 
     @ManyToMany
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"))
-    List<Skill> skills;
+    List<Skill> skills = new ArrayList<>();
+
+    @OneToMany(mappedBy = "job")
+    List<Resume> resumes = new ArrayList<>();
 
 }

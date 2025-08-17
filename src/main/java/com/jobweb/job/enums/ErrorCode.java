@@ -15,7 +15,9 @@ public enum ErrorCode {
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
     FILE_EMPTY(1009, "File is empty. Please upload a file", HttpStatus.BAD_REQUEST),
-    INVALID_FILE(1010, "Invalid file", HttpStatus.BAD_REQUEST)
+    INVALID_FILE(1010, "Invalid file", HttpStatus.BAD_REQUEST),
+    RESUME_NOT_EXISTED(1011, "Resume not existed", HttpStatus.BAD_REQUEST),
+    JOB_NOT_EXISTED(1012, "Job not existed", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;
