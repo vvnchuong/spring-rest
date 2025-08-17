@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.POST, SIGNED_KEY).permitAll()
+                                .requestMatchers("/storage/**").permitAll()
                                 .anyRequest().authenticated());
 
         httpSecurity

@@ -13,7 +13,9 @@ public enum ErrorCode {
     PASSWORD_INVALID(1005, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN)
+    UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
+    FILE_EMPTY(1009, "File is empty. Please upload a file", HttpStatus.BAD_REQUEST),
+    INVALID_FILE(1010, "Invalid file", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;
