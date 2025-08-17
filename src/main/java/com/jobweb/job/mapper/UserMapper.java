@@ -13,7 +13,8 @@ public interface UserMapper {
     User toUser(UserCreationRequest request);
 
     default UserResponse toUserResponse(User user) {
-        if (user == null) return null;
+        if (user == null)
+            return null;
 
         UserResponse.CompanyUser companyUser = null;
         if (user.getCompany() != null) {

@@ -1,5 +1,6 @@
 package com.jobweb.job.domain;
 
+import com.jobweb.job.enums.Level;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,36 +8,44 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "companies")
-public class Company {
+@Table(name = "jobs")
+public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     String name;
+    String location;
+    double salary;
+    int quantity;
+
+    @Enumerated(EnumType.STRING)
+    Level level;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     String description;
 
-    String address;
-    String logo;
+    Instant startDate;
+    Instant endDate;
+    boolean active;
     Instant createdAt;
     Instant updatedAt;
     String createdBy;
     String updatedBy;
 
-    @OneToMany(mappedBy = "company")
-    List<User> users = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    Company company;
 
-    @OneToMany(mappedBy = "company")
-    List<Job> jobs = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"))
+    List<Skill> skills;
 
 }

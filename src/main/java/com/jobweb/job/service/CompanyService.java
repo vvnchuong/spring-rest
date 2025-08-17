@@ -6,12 +6,14 @@ import com.jobweb.job.domain.dto.request.CompanyUpdateRequest;
 import com.jobweb.job.domain.dto.response.CompanyResponse;
 import com.jobweb.job.mapper.CompanyMapper;
 import com.jobweb.job.repository.CompanyRepository;
+import com.jobweb.job.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -22,11 +24,15 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
+    private final UserRepository userRepository;
+
     private final CompanyMapper companyMapper;
 
     public CompanyService(CompanyRepository companyRepository,
+                          UserRepository userRepository,
                           CompanyMapper companyMapper){
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
         this.companyMapper = companyMapper;
     }
 
@@ -74,7 +80,12 @@ public class CompanyService {
         return companyMapper.toCompanyResponse(companyRepository.save(company.get()));
     }
 
+    @Transactional
     public void deleteCompany(long companyId){
+        Company company = companyRepository.findById(companyId)
+                        .orElseThrow(() ->new RuntimeException("Company not found"));
+
+        userRepository.deleteAll();
         companyRepository.deleteById(companyId);
     }
 
