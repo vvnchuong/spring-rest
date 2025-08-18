@@ -1,9 +1,7 @@
 package com.jobweb.job.domain.dto.request;
 
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Builder
@@ -16,5 +14,16 @@ public class UserUpdateRequest {
     int age;
     String gender;
     String address;
+
+    RoleUser role;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class RoleUser {
+        long id;
+    }
 
 }

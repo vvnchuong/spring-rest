@@ -46,4 +46,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     List<Resume> resumes = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    Role role;
+
 }

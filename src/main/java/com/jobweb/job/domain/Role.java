@@ -37,4 +37,7 @@ public class Role {
     )
     List<Permission> permissions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "role")
+    List<User> users = new ArrayList<>();
+
 }

@@ -1,12 +1,16 @@
 package com.jobweb.job.service;
 
 import com.jobweb.job.domain.Company;
+import com.jobweb.job.domain.Role;
 import com.jobweb.job.domain.User;
 import com.jobweb.job.domain.dto.request.UserCreationRequest;
 import com.jobweb.job.domain.dto.request.UserUpdateRequest;
 import com.jobweb.job.domain.dto.response.UserResponse;
+import com.jobweb.job.enums.ErrorCode;
+import com.jobweb.job.exception.AppException;
 import com.jobweb.job.mapper.UserMapper;
 import com.jobweb.job.repository.CompanyRepository;
+import com.jobweb.job.repository.RoleRepository;
 import com.jobweb.job.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +29,20 @@ public class UserService {
 
     private final CompanyRepository companyRepository;
 
+    private final RoleRepository roleRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper;
 
     public UserService(UserRepository userRepository,
                        CompanyRepository companyRepository,
+                       RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder,
                        UserMapper userMapper){
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
@@ -50,9 +58,12 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request){
         Optional<User> user = userRepository.findUserByEmail(request.getEmail());
+        Role role = roleRepository.findById(request.getRole().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         if(user.isPresent())
             throw new RuntimeException("User is existed");
         User newUser = userMapper.toUser(request);
+        newUser.setRole(role);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setCreatedAt(Instant.now());
 

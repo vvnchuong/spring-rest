@@ -24,6 +24,14 @@ public interface UserMapper {
                     .build();
         }
 
+        UserResponse.RoleUser roleUser = null;
+        if(user.getRole() != null){
+            roleUser = UserResponse.RoleUser.builder()
+                    .id(user.getRole().getId())
+                    .name(user.getRole().getName())
+                    .build();
+        }
+
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -33,6 +41,7 @@ public interface UserMapper {
                 .address(user.getAddress())
                 .createdAt(user.getCreatedAt())
                 .company(companyUser)
+                .role(roleUser)
                 .build();
     }
 
