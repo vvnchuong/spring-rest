@@ -10,13 +10,16 @@ import java.time.Instant;
 @Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SkillResponse {
+public class PermissionResponse {
 
     long id;
     String name;
+    String apiPath;
+    String method;
+    String module;
     Instant createdAt;
-    Instant updatedAt;
     String createdBy;
+    Instant updatedAt;
     String updatedBy;
 
 }

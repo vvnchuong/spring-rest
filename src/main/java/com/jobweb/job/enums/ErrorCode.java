@@ -17,7 +17,11 @@ public enum ErrorCode {
     FILE_EMPTY(1009, "File is empty. Please upload a file", HttpStatus.BAD_REQUEST),
     INVALID_FILE(1010, "Invalid file", HttpStatus.BAD_REQUEST),
     RESUME_NOT_EXISTED(1011, "Resume not existed", HttpStatus.BAD_REQUEST),
-    JOB_NOT_EXISTED(1012, "Job not existed", HttpStatus.BAD_REQUEST)
+    JOB_NOT_EXISTED(1012, "Job not existed", HttpStatus.BAD_REQUEST),
+    PERMISSION_NOT_EXISTED(1013, "Permission not existed", HttpStatus.BAD_REQUEST),
+    PERMISSION_EXISTED(1014, "Permission existed", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_EXISTED(1015, "Role not existed", HttpStatus.BAD_REQUEST),
+    ROLE_EXISTED(1016, "Role existed", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;

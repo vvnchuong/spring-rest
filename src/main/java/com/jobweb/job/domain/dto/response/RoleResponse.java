@@ -4,19 +4,23 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SkillResponse {
+public class RoleResponse {
 
-    long id;
     String name;
+    String description;
+    boolean active;
     Instant createdAt;
-    Instant updatedAt;
     String createdBy;
+    Instant updatedAt;
     String updatedBy;
+
+    List<PermissionResponse> permissions;
 
 }

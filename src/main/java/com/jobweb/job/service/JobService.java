@@ -59,6 +59,7 @@ public class JobService {
             throw new RuntimeException("Skill not found");
 
         Job job = jobMapper.toJob(request);
+        job.setSkills(skill);
 
         String email = getEmailInToken();
         job.setCreatedBy(email);
