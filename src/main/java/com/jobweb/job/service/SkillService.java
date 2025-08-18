@@ -5,6 +5,8 @@ import com.jobweb.job.domain.Skill;
 import com.jobweb.job.domain.dto.request.SkillCreationRequest;
 import com.jobweb.job.domain.dto.request.SkillUpdateRequest;
 import com.jobweb.job.domain.dto.response.SkillResponse;
+import com.jobweb.job.enums.ErrorCode;
+import com.jobweb.job.exception.AppException;
 import com.jobweb.job.mapper.SkillMapper;
 import com.jobweb.job.repository.SkillRepository;
 import org.springframework.data.domain.Page;
@@ -30,21 +32,22 @@ public class SkillService {
         this.skillMapper = skillMapper;
     }
 
-    public Page<SkillResponse> getAllSkills(Specification<Skill> spec, Pageable pageable){
+    public Page<SkillResponse> getAllSkills(
+            Specification<Skill> spec, Pageable pageable){
         return skillRepository.findAll(spec, pageable)
                 .map(skillMapper::toSkillResponse);
     }
 
     public SkillResponse getSkillById(long skillId){
         Skill skill = skillRepository.findById(skillId)
-                .orElseThrow(() -> new RuntimeException("Skill not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.SKILL_NOT_EXISTED));
         return skillMapper.toSkillResponse(skill);
     }
 
     public SkillResponse createSkill(SkillCreationRequest request){
         Optional<Skill> skill = skillRepository.findByName(request.getName());
         if(skill.isPresent())
-            throw new RuntimeException("skill existed");
+            throw new AppException(ErrorCode.SKILL_EXISTED);
 
         Skill newSkill = skillMapper.toSkill(request);
 
@@ -57,7 +60,7 @@ public class SkillService {
 
     public SkillResponse updateSkill(long skillId, SkillUpdateRequest request){
         Skill skill = skillRepository.findById(skillId)
-                .orElseThrow(() -> new RuntimeException("Skill not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.SKILL_NOT_EXISTED));
         skillMapper.updateSkill(skill, request);
 
         String email = getEmailInToken();

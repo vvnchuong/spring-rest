@@ -21,7 +21,11 @@ public enum ErrorCode {
     PERMISSION_NOT_EXISTED(1013, "Permission not existed", HttpStatus.BAD_REQUEST),
     PERMISSION_EXISTED(1014, "Permission existed", HttpStatus.BAD_REQUEST),
     ROLE_NOT_EXISTED(1015, "Role not existed", HttpStatus.BAD_REQUEST),
-    ROLE_EXISTED(1016, "Role existed", HttpStatus.BAD_REQUEST)
+    ROLE_EXISTED(1016, "Role existed", HttpStatus.BAD_REQUEST),
+    COMPANY_NOT_EXISTED(1017, "Company not existed", HttpStatus.BAD_REQUEST),
+    COMPANY_EXISTED(1018, "Company existed", HttpStatus.BAD_REQUEST),
+    SKILL_NOT_EXISTED(1019, "Skill not existed", HttpStatus.BAD_REQUEST),
+    SKILL_EXISTED(2020, "SKill existed", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;

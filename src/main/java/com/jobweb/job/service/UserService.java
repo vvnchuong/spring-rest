@@ -53,15 +53,18 @@ public class UserService {
     }
 
     public UserResponse getUserById(long userId){
-        return userMapper.toUserResponse(userRepository.findById(userId).get());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse createUser(UserCreationRequest request){
-        Optional<User> user = userRepository.findUserByEmail(request.getEmail());
+        User user = userRepository.findUserByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_EXISTED));
+
         Role role = roleRepository.findById(request.getRole().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
-        if(user.isPresent())
-            throw new RuntimeException("User is existed");
+
         User newUser = userMapper.toUser(request);
         newUser.setRole(role);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -69,7 +72,7 @@ public class UserService {
 
         if (request.getCompany() != null && request.getCompany().getId() > 0) {
             Company company = companyRepository.findById(request.getCompany().getId())
-                    .orElseThrow(() -> new RuntimeException("Company not found"));
+                    .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
             newUser.setCompany(company);
         }
 
@@ -79,15 +82,17 @@ public class UserService {
     }
 
     public UserResponse updateUser(long id, UserUpdateRequest request){
-        Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty())
-            throw new RuntimeException("User is not existed");
-        userMapper.updateUser(user.get(), request);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        return userMapper.toUserResponse(userRepository.save(user.get()));
+        userMapper.updateUser(user, request);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     public void deleteUser(long id){
+        User user = userRepository.findById(id)
+                        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userRepository.deleteById(id);
     }
 

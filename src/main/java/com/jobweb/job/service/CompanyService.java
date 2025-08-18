@@ -4,6 +4,8 @@ import com.jobweb.job.domain.Company;
 import com.jobweb.job.domain.dto.request.CompanyCreationRequest;
 import com.jobweb.job.domain.dto.request.CompanyUpdateRequest;
 import com.jobweb.job.domain.dto.response.CompanyResponse;
+import com.jobweb.job.enums.ErrorCode;
+import com.jobweb.job.exception.AppException;
 import com.jobweb.job.mapper.CompanyMapper;
 import com.jobweb.job.repository.CompanyRepository;
 import com.jobweb.job.repository.UserRepository;
@@ -42,22 +44,19 @@ public class CompanyService {
     }
 
     public CompanyResponse getCompanyById(long companyId){
-        return companyMapper.toCompanyResponse(
-                companyRepository.findById(companyId).get());
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
+        return companyMapper.toCompanyResponse(company);
     }
 
     public CompanyResponse createCompany(CompanyCreationRequest request){
-        Optional<Company> company = companyRepository.findByName(request.getName());
-        if(company.isPresent())
-            throw new RuntimeException();
+        Company company = companyRepository.findByName(request.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.COMPANY_EXISTED));
 
         Company newCompany = companyMapper.toCompany(request);
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        // kiem tra auth co phai la "the hien" cua JwtA.... neu dung thi gan auth = jwtAuth
-        if(auth instanceof JwtAuthenticationToken jwtAuth){
-            String email = jwtAuth.getToken().getClaimAsString("iss");
-            newCompany.setCreatedBy(email);
-        }
+
+        String email = getEmailInToken();
+        newCompany.setCreatedBy(email);
         newCompany.setCreatedAt(Instant.now());
         companyRepository.save(newCompany);
 
@@ -65,28 +64,33 @@ public class CompanyService {
     }
 
     public CompanyResponse updateCompany(long companyId, CompanyUpdateRequest request){
-        Optional<Company> company = companyRepository.findByName(request.getName());
-        if(company.isEmpty())
-            throw new RuntimeException();
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth instanceof JwtAuthenticationToken jwtAuth){
-            String email = jwtAuth.getToken().getClaimAsString("iss");
-            company.get().setUpdatedBy(email);
-        }
-        company.get().setUpdatedAt(Instant.now());
+        String email = getEmailInToken();
+        company.setUpdatedBy(email);
+        company.setUpdatedAt(Instant.now());
 
-        companyMapper.updateCompany(company.get(), request);
-        return companyMapper.toCompanyResponse(companyRepository.save(company.get()));
+        companyMapper.updateCompany(company, request);
+        return companyMapper.toCompanyResponse(companyRepository.save(company));
     }
 
     @Transactional
     public void deleteCompany(long companyId){
         Company company = companyRepository.findById(companyId)
-                        .orElseThrow(() ->new RuntimeException("Company not found"));
+                        .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
 
         userRepository.deleteAll();
         companyRepository.deleteById(companyId);
+    }
+
+    private String getEmailInToken(){
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!(auth instanceof JwtAuthenticationToken jwtAuth)){
+            throw new RuntimeException("Invalid Token");
+        } else {
+            return jwtAuth.getToken().getClaimAsString("iss");
+        }
     }
 
 }

@@ -5,6 +5,8 @@ import com.jobweb.job.domain.Skill;
 import com.jobweb.job.domain.dto.request.JobCreationRequest;
 import com.jobweb.job.domain.dto.request.JobUpdateRequest;
 import com.jobweb.job.domain.dto.response.JobResponse;
+import com.jobweb.job.enums.ErrorCode;
+import com.jobweb.job.exception.AppException;
 import com.jobweb.job.mapper.JobMapper;
 import com.jobweb.job.repository.JobRepository;
 import com.jobweb.job.repository.SkillRepository;
@@ -42,11 +44,10 @@ public class JobService {
     }
 
     public JobResponse getJobById(long jobId){
-        Optional<Job> job = jobRepository.findById(jobId);
-        if(job.isEmpty()){
-            throw new RuntimeException("job not existed");
-        }
-        return jobMapper.toJobResponse(job.get());
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_EXISTED));
+
+        return jobMapper.toJobResponse(job);
     }
 
     public JobResponse createJob(JobCreationRequest request){
@@ -56,7 +57,7 @@ public class JobService {
 
         List<Skill> skill = skillRepository.findByIdIn(skillIds);
         if(skill.isEmpty())
-            throw new RuntimeException("Skill not found");
+            throw new AppException(ErrorCode.SKILL_NOT_EXISTED);
 
         Job job = jobMapper.toJob(request);
         job.setSkills(skill);
@@ -70,7 +71,7 @@ public class JobService {
 
     public JobResponse updateJob(long jobId, JobUpdateRequest request){
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_EXISTED));
         jobMapper.updateJob(job, request);
 
         String email = getEmailInToken();
@@ -82,7 +83,7 @@ public class JobService {
 
     public void deleteJob(long jobId){
         jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_EXISTED));
         jobRepository.deleteById(jobId);
     }
 
